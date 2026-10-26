@@ -1,0 +1,21 @@
+2026-10-25T11:01:57.970409|||0|||94.59|||http://testphp.vulnweb.com
+2026-10-25T11:02:38.142979|||0|||86.72|||http://testhtml5.vulnweb.com
+2026-10-25T11:03:02.235447|||0|||93.36|||http://testaspnet.vulnweb.com
+2026-10-25T11:04:18.796999|||0|||94.04|||https://insecure-website.com/status?message=All+is+well.
+<p>Status: All is well.</p>
+2026-10-25T11:16:50.842433|||3|||88.57|||POST /profile/update HTTP/1.1
+Host: portal.example.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 36
+
+display_name=%3Cscript%3Ealert(1)%3C%2Fscript%3E
+2026-10-25T11:18:09.102912|||1|||99.96|||GET /products?category=books HTTP/1.1
+Host: portal.example.com
+User-Agent: Mozilla/5.0
+Accept: text/html
+2026-10-25T11:47:58.470685|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-25T11:48:01.639611|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-25T11:51:49.069438|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-25T11:51:51.494550|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-25T11:53:48.671470|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-25T11:53:51.585243|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1

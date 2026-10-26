@@ -1,0 +1,93 @@
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-B7tLWcLi.js
+var tsrStartManifest = () => ({ routes: {
+	__root__: {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/__root.tsx",
+		children: [
+			"/",
+			"/cases",
+			"/detection",
+			"/inspector",
+			"/model-insights",
+			"/reports",
+			"/threat-intelligence"
+		],
+		preloads: [
+			"/assets/index-RQZ3Z2nq.js",
+			"/assets/link-_j_LJZfQ.js",
+			"/assets/preload-helper-CjVWtrQc.js",
+			"/assets/detection-D6SJD8fB.js",
+			"/assets/reports-9lLjgG4c.js"
+		],
+		scripts: [{ attrs: {
+			type: "module",
+			async: !0,
+			src: "/assets/index-RQZ3Z2nq.js"
+		} }]
+	},
+	"/": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/index.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/routes-DaSn-ivF.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/securityApi-BDMsZaC6.js",
+			"/assets/chart-DVX_HMvd.js"
+		]
+	},
+	"/cases": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/cases.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/cases-DcLlVzq5.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/securityApi-BDMsZaC6.js"
+		]
+	},
+	"/detection": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/detection.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/detection-DUDqVCz5.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/securityApi-BDMsZaC6.js",
+			"/assets/chart-DVX_HMvd.js"
+		]
+	},
+	"/inspector": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/inspector.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/inspector-BMW1uuMf.js",
+			"/assets/useNavigate-bGp64IfQ.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/loader-circle-C1ahU8Sz.js",
+			"/assets/securityApi-BDMsZaC6.js"
+		]
+	},
+	"/model-insights": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/model-insights.tsx",
+		children: void 0,
+		preloads: ["/assets/model-insights-p4rm7B2j.js", "/assets/security-ui-1smG3VOf.js"]
+	},
+	"/reports": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/reports.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/reports-CpY-BBfD.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/loader-circle-C1ahU8Sz.js",
+			"/assets/securityApi-BDMsZaC6.js"
+		]
+	},
+	"/threat-intelligence": {
+		filePath: "C:/Users/ANKIT CHAUDHARY/Downloads/MP/frontend_MPP/src/routes/threat-intelligence.tsx",
+		children: void 0,
+		preloads: [
+			"/assets/threat-intelligence-oZ3S0uR8.js",
+			"/assets/security-ui-1smG3VOf.js",
+			"/assets/securityApi-BDMsZaC6.js"
+		]
+	}
+} });
+//#endregion
+export { tsrStartManifest };

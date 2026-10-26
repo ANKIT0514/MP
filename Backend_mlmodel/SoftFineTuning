@@ -1,0 +1,12 @@
+if __name__ == "__main__":
+    # 1. Run the soft fine-tuning loop on analyst-corrected entries
+    run_soft_finetuning_pipeline()
+    
+    # 2. (Optional) Run background diagnostics to see what structural elements caused the errors
+    run_offline_forensics()
+    
+    # 3. Re-instantiate the gateway using your freshly fine-tuned model weights
+    gateway = ProductionWAFGateway(use_finetuned=True, enable_shap=True)
+    
+    print("\n🚀 INTERACTIVE HYBRID WAF GATEWAY ONLINE (FINE-TUNED MODE)")
+    # ... interactive loop logic ...
