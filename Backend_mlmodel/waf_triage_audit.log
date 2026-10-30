@@ -19,3 +19,10 @@ Accept: text/html
 2026-10-25T11:51:51.494550|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
 2026-10-25T11:53:48.671470|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
 2026-10-25T11:53:51.585243|||0|||60.27|||GET /search?q=SELECT%20*%20FROM%20users%20WHERE%20id=1 HTTP/1.1
+2026-10-26T23:16:29.520059|||0|||96.73|||EXEC xp_cmdshell('net user hacker passwords123 /add')"
+2026-10-27T11:07:26.164490|||0|||83.15|||http://google.com/
+2026-10-27T11:08:02.386981|||0|||83.15|||http://google.com/
+2026-10-30T09:27:21.920562|||0|||99.43|||https://www.google.com/
+2026-10-30T10:33:54.686760|||2|||100.00|||SELECT * FROM employees;
+2026-10-30T10:37:50.536826|||0|||94.54|||     "http://0x7f000001/latest/meta-data/iam/security-credentials/",
+2026-10-30T10:38:45.122849|||0|||94.44||| "EXEC xp_cmdshell('net user hacker passwords123 /add')"

@@ -46,13 +46,23 @@ TARGET_NAMES = ['Benign', 'XSS', 'SQLi', 'SSRF']
 # HARDENED POST-INFERENCE CIRCUIT BREAKER REGEX MATRIX (ANTI-EVASION)
 # =====================================================================
 REAL_SQLI_SYNTAX = re.compile(
-    r"['\"`\-\-\#]|\/\*|\*\/|\b(or|and)\b\s+\d+\s*\=\s*\d+|\b(select|union|where|insert|delete|drop|update|exec|execute)\b|"
-    r"\d+\s*=\s*\d+|/\*!\d+|\b0x[0-9a-fA-F]+\b|\/\/\*\*\/|\bsys\.tables\b|\bfrom\b|\bxp_cmdshell\b", 
+    r"(?:"
+    r"\bunion\s+(?:all\s+)?select\b"
+    r"|(?:\bor\b|\band\b)\s+(?:['\"`]*[\w.]+['\"`]?\s*=\s*['\"`]?[^\s'\"`]+|[0-9]+\s*=\s*[0-9]+)"
+    r"|['\"`]\s*(?:or|and)\b"
+    r"|\b(?:sleep|benchmark|pg_sleep|waitfor\s+delay)\s*\("
+    r"|\b(?:into\s+(?:outfile|dumpfile)|xp_cmdshell)\b"
+    r"|;\s*(?:select|insert|update|delete|drop|alter|exec(?:ute)?|create)\b"
+    r"|\/\*|\*\/|--\s"
+    r")",
     re.IGNORECASE
 )
 
 REAL_SSRF_SYNTAX = re.compile(
-    r"https?://|\b(localhost|aws|metadata|compute|latest/meta-data|internal)\b|@[0-9a-zA-Z.]+", 
+    r"(?:\b(?:localhost|metadata(?:\.google\.internal)?|latest\/meta-data|compute(?:\.internal)?|unix)\b"
+    r"|(?:https?://)?(?:127(?:\.[0-9]{1,3}){3}|10(?:\.[0-9]{1,3}){3}|192\.168(?:\.[0-9]{1,3}){2}|169\.254(?:\.[0-9]{1,3}){2}|0:0:0:0:0:0:0:1|::1)(?:[\/:?\s]|$)"
+    r"|(?:https?://)?(?:172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2})(?:[\/:?\s]|$)"
+    r"|@[0-9]{1,3}(?:\.[0-9]{1,3}){3})",
     re.IGNORECASE
 )
 
@@ -330,6 +340,15 @@ class ProductionWAFGateway:
         except Exception:
             return False
 
+    def _is_ssrf_request(self, payload_string):
+        if REAL_SSRF_SYNTAX.search(payload_string):
+            return True
+
+        candidate = payload_string.strip()
+        if candidate.lower().startswith(('http://', 'https://')):
+            return self._is_dangerous_ssrf_host(candidate)
+        return False
+
     def inspect_traffic(self, payload_string):
         if not isinstance(payload_string, str) or not payload_string.strip():
             raise ValueError("Payload must be a non-empty string.")
@@ -353,22 +372,17 @@ class ProductionWAFGateway:
         if ai_pred == 'SQLi' and not REAL_SQLI_SYNTAX.search(normalized):
             final_verdict = 'Benign'; override_triggered = True
             validation_reason = "The SQL injection prediction did not match the required SQL syntax."
-        elif ai_pred == 'SSRF' and not (REAL_SSRF_SYNTAX.search(normalized) or self._is_dangerous_ssrf_host(normalized)):
+        elif ai_pred == 'SSRF' and not self._is_ssrf_request(normalized):
             final_verdict = 'Benign'; override_triggered = True
             validation_reason = "The SSRF prediction did not match a URL or private-network destination."
         elif ai_pred == 'XSS' and not REAL_XSS_SYNTAX.search(normalized):
             final_verdict = 'Benign'; override_triggered = True
             validation_reason = "The XSS prediction did not match executable markup or script syntax."
         elif ai_pred == 'Benign':
-            has_sqli_keyword = any(
-                re.search(rf"\b{word}\b", normalized.lower()) 
-                for word in ['select', 'union', 'where', 'or', 'and', 'exec', 'execute', 'xp_cmdshell']
-            ) or any(x in normalized.lower() for x in ['0x', '/*', '*/'])
-
-            if REAL_SQLI_SYNTAX.search(normalized) and has_sqli_keyword:
+            if REAL_SQLI_SYNTAX.search(normalized):
                 final_verdict = 'SQLi'; override_triggered = True
                 validation_reason = "SQL injection syntax overrode a benign model prediction."
-            elif self._is_dangerous_ssrf_host(normalized) or (REAL_SSRF_SYNTAX.search(normalized) and any(x in normalized.lower() for x in ['http', 'metadata', 'aws', 'internal', 'compute', '@', 'v1'])):
+            elif self._is_ssrf_request(normalized):
                 final_verdict = 'SSRF'; override_triggered = True
                 validation_reason = "A private-network destination or SSRF pattern overrode a benign model prediction."
             elif REAL_XSS_SYNTAX.search(normalized) and any(x in normalized.lower() for x in ['<', '>', 'script', 'onload', 'onerror', 'charcode']):
@@ -386,6 +400,11 @@ class ProductionWAFGateway:
                 print(" ├─ [CIRCUIT BREAKER OVERRIDE]: Conflicting structural parameters. Re-routing payload...")
             with open(AUDIT_LOG_PATH, "a") as f:
                 f.write(f"{datetime.now().isoformat()}|||{ml_predicted_idx}|||{ai_conf:.2f}|||{payload_string}\n")
+
+        final_confidence = (
+            100.0 if override_triggered and final_verdict != "Benign"
+            else float(pred_probs[TARGET_NAMES.index(final_verdict)] * 100)
+        )
 
         if self.verbose:
             print(f" └─ RUNTIME ROUTING DECISION: ──> **{final_verdict}** (Final Status Confirmation)")
@@ -438,6 +457,7 @@ class ProductionWAFGateway:
                 for name, probability in zip(TARGET_NAMES, pred_probs)
             },
             "final_verdict": final_verdict,
+            "final_confidence": final_confidence,
             "overridden": override_triggered,
             "validation_reason": validation_reason,
             "shap_explanations": shap_explanations,

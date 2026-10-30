@@ -11,7 +11,6 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request
 
-
 BACKEND_DIR = Path(__file__).resolve().parent
 DATABASE_PATH = Path(os.environ.get("WAF_DATABASE_PATH", BACKEND_DIR / "inspection_history.sqlite3"))
 MAX_PAYLOAD_BYTES = 10 * 1024
@@ -73,7 +72,11 @@ def map_analysis(inference, elapsed_ms):
         DISPLAY_NAMES[label]: round(inference["probabilities"][label], 6)
         for label in CLASSIFICATIONS
     }
-    confidence = round(inference["ml_confidence"], 6)
+    final_confidence = inference.get(
+        "final_confidence",
+        inference["probabilities"].get(verdict_label, inference["ml_confidence"]),
+    )
+    confidence = round(final_confidence, 6)
     class_name = DISPLAY_NAMES[verdict_label]
     status = "Overridden" if inference["overridden"] else (
         "Passed" if verdict_label == "Benign" else "Confirmed"
